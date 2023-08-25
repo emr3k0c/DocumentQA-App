@@ -23,22 +23,8 @@ def main():
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=db.as_retriever(),
-        memory=memory
+        memory=memory,
     )
-    template = """
-    You are a chat bot who loves to help people! Given the following context sections, answer the
-    question using only the given context. If you are unsure and the answer is not
-    explicitly writting in the documentation, say "Sorry, I don't know how to help with that."
-
-    Context sections:
-    {context}
-
-    Question:
-    {users_question}
-
-    Answer:
-    """
-
 
     while True:
         user_question = input("You: ")  # Get user input
@@ -49,14 +35,9 @@ def main():
 
         response = conversation_chain({'question': user_question})
 
-
-        # Format the prompt using the template
-        prompt = PromptTemplate(template=template, input_variables=["context", "users_question"])
-        prompt_text = prompt.format(context=response, users_question=user_question)
-
         # Get the assistant's response
-        assistant_response = llm(prompt_text)
-        print("Assistant:", assistant_response)
+
+        print("Assistant:", response["answer"])
 
 
 if __name__ == "__main__":
